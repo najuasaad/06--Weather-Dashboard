@@ -6,6 +6,8 @@ var searchButton =$('#button-addon2')
 var locStore = JSON.parse(localStorage.getItem("locStore"))
 var whatDayIsIt = moment().format('ll')
 
+var coord;
+
 if (locStore === null) {
     locStore = [];
 }
@@ -26,12 +28,8 @@ searchButton.on("click", function(){
         localStorage.setItem("locStore", JSON.stringify(locStore))
         locStore = JSON.parse(localStorage.getItem("locStore"))
         propagateCityList();
-        // displayWeather();
-        // displayForecast();
     })
 });
-
-//text-capitalize Makes The Text Like This
 
 function propagateCityList() {
     cityList.empty();
@@ -51,15 +49,39 @@ function displayWeather(index) {
     .then(function (data) {
         currentWeather.empty()
         console.log(data)
+        coord = [data.coord.lon, data.coord.lat]
         currentWeather
             .append($("<h1 class='text-center mb-4'>").text(data.name + ": " + whatDayIsIt))
             .append($("<img class='rounded mx-auto d-block'>").attr("src", `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`))
             .append($("<p class='text-center'>").text("Temperature: " + data.main.temp + "F"))
             .append($("<p class='text-center'>").text("Humidity: " + data.main.humidity))
-            .append($("<p class='text-center'>").text("Wind Speed: " + data.wind.speed))
-            .append($("<p class='text-center'>").text("Description: " + data.weather[0].main))
+            .append($("<p class='text-center'>").text("Wind Speed: " + data.wind.speed +"mph"))
+            //.append($("<p class='text-center'>").text("Description: " + data.weather[0].main))
+            return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${coord[0]}&lon=${coord[1]}&exclude=minutely,hourly,alerts&appid=2c6c728ab0cbd0494e7080e56cf9711b`)
     })
 
+    .then ( function(coordinatecall) {
+        return coordinatecall.json()
+    })
+
+    .then (function(coordinatecall){
+        console.log(coordinatecall.current.uvi)
+        currentWeather.append($("<p id='uv' class='text-center text-white w-25 p-1 mx-auto rounded-pill'>").text("UV Index: " + coordinatecall.current.uvi ))
+        var uvIndex = $('#uv');
+            if (coordinatecall.current.uvi <= 2){
+                uvIndex.addClass("bg-success")
+            }
+            else if (coordinatecall.current.uvi <= 5){
+                uvIndex.addClass("bg-warning")
+            }
+            else {
+                uvIndex.addClass("bg-danger")
+            }
+
+    })
+
+
+    // .then (function (coord)){
     // fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&exclude=minutely,hourly,alerts&appid=2c6c728ab0cbd0494e7080e56cf9711b`)
     // .then(function(response) {
     //     if (response.status === 200) { 
@@ -81,14 +103,12 @@ function displayForecast(index) {
          fiveDay.empty()
          console.log(data)
          for (var i = 5; i < 39; i += 8 ) {
-            var tile = $("<div class='card col-2 mx-md-2'><div class='card-body'></div></div>")
-            //var day = $("<p class='text-center'>")
+            var tile = $("<div class='mx-auto card col-2 mx-md-2 bg-info text-white'><div class='card-body'></div></div>")
             var temperature = $("<p class='text-center'>")
             var humidity = $("<p class='text-center'>")
             var icon = $("<img class='text-center'>")
 
             icon.attr("src", `http://openweathermap.org/img/wn/${data.list[i].weather[0].icon}@2x.png`)
-            //day.text(whatDayIsIt)
             temperature.text(data.list[i].main.temp + "F")
             humidity.text("Humidity: " + data.list[i].main.humidity)
 

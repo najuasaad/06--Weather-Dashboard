@@ -1,4 +1,4 @@
-# 06--Weather-Dashboard
+# 06 Weather Dashboard
 
 The search bar will add any city searched that exists in the weather api database. Those buttons can be clicked and will display the current weather and a five day forecast.
 
@@ -11,3 +11,4 @@ I styled the page entirely with Bootstrap. I have no style sheet.
 Link: https://najuasaad.github.io/06--Weather-Dashboard/
 
 Screenshot:
+![image](./picture/SharedScreenshot.jpg)

@@ -108,7 +108,7 @@ function displayForecast(index) {
             var humidity = $("<p class='text-center'>")
             var icon = $("<img class='text-center'>")
 
-            icon.attr("src", `http://openweathermap.org/img/wn/${data.list[i].weather[0].icon}@2x.png`)
+            icon.attr("src", `https://openweathermap.org/img/wn/${data.list[i].weather[0].icon}@2x.png`)
             temperature.text(data.list[i].main.temp + "F")
             humidity.text("Humidity: " + data.list[i].main.humidity)
 
